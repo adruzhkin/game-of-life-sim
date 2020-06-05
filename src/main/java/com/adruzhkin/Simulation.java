@@ -37,26 +37,55 @@ public class Simulation {
         this.board[x][y] = 0;
     }
 
+    public boolean isAlive(int x, int y) {
+        return this.board[x][y] == 1;
+    }
+
+    public boolean isDead(int x, int y) {
+        return this.board[x][y] == 0;
+    }
+
+    public int getState(int x, int y) {
+        if (x < 0 || x >= width) return 0;
+        if (y < 0 || y >= height) return 0;
+        return board[x][y];
+    }
+
     public int countAliveNeighbours(int x, int y) {
         int count = 0;
 
-        int xLess = Math.max(x - 1, 0);
-        int xMore = Math.min(x + 1, width - 1);
-        int yLess = Math.max(y - 1, 0);
-        int yMore = Math.min(y + 1, height - 1);
+        count += getState(x - 1, y - 1);
+        count += getState(x, y - 1);
+        count += getState(x + 1, y - 1);
 
-        count += this.board[xLess][yLess];
-        count += this.board[x][yLess];
-        count += this.board[xMore][yLess];
+        count += getState(x - 1, y);
+        count += getState(x + 1, y);
 
-        count += this.board[xLess][y];
-        count += this.board[xMore][y];
-
-        count += this.board[xLess][yMore];
-        count += this.board[x][yMore];
-        count += this.board[xMore][yMore];
+        count += getState(x - 1, y + 1);
+        count += getState(x, y + 1);
+        count += getState(x + 1, y + 1);
 
         return count;
+    }
+
+    public void step() {
+        int[][] newBoard = new int[width][height];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int aliveNeighbours = countAliveNeighbours(x, y);
+                newBoard[x][y] = board[x][y];
+
+                if (isAlive(x, y)) {
+                    if (aliveNeighbours < 2 || aliveNeighbours > 3) newBoard[x][y] = 0;
+                } else {
+                    if (aliveNeighbours == 3) newBoard[x][y] = 1;
+                }
+
+            }
+        }
+
+        board = newBoard;
     }
 
     public static void main(String[] args) {
@@ -68,7 +97,14 @@ public class Simulation {
 
         simulation.printBoard();
 
-        System.out.println(simulation.countAliveNeighbours(7, 4));
+        simulation.step();
+        simulation.printBoard();
+        simulation.step();
+        simulation.printBoard();
+        simulation.step();
+        simulation.printBoard();
+        simulation.step();
+        simulation.printBoard();
     }
 
 }
