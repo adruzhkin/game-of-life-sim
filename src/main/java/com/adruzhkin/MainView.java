@@ -5,17 +5,24 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Affine;
 
 public class MainView extends VBox {
 
     private Button stepButton;
     private Canvas canvas;
+
+    private Affine affine;
+
     private Simulation simulation;
 
     public MainView() {
         this.stepButton = new Button("Step");
         this.canvas = new Canvas(400, 400);
         this.getChildren().addAll(this.stepButton, this.canvas);
+
+        this.affine = new Affine();
+        this.affine.appendScale(400 / 10f, 400 / 10f);
 
         this.simulation = new Simulation(10, 10);
 
@@ -32,6 +39,7 @@ public class MainView extends VBox {
 
     public void draw() {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
+        g.setTransform(this.affine);
 
         g.setFill(Color.LIGHTGREY);
         g.fillRect(0, 0, 400, 400);
