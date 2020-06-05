@@ -12,6 +12,14 @@ public class Simulation {
         this.board = new int[width][height];
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public void printBoard() {
         System.out.println("---");
         for (int y = 0; y < height; y++) {
