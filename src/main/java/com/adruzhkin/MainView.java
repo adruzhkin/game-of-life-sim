@@ -30,6 +30,7 @@ public class MainView extends VBox {
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
+        this.canvas.setOnMouseDragged(this::handleDraw);
 
         this.getChildren().addAll(this.stepButton, this.canvas);
 
