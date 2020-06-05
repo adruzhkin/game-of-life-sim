@@ -53,6 +53,17 @@ public class MainView extends VBox {
             }
         }
 
+        //Draw the grid
+        g.setStroke(Color.GRAY);
+        g.setLineWidth(0.05);
+        for (int x = 0; x <= this.simulation.getWidth(); x++) {
+            g.strokeLine(x, 0, x, 10);
+        }
+
+        for (int y = 0; y <= this.simulation.getHeight(); y++) {
+            g.strokeLine(0, y, 10, y);
+        }
+
     }
 
 }
