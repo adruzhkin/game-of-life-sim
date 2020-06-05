@@ -1,0 +1,5 @@
+# Idea project folders and files
+.idea/
+out/
+target/
+*.iml
