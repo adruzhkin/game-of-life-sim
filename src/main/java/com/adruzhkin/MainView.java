@@ -18,6 +18,11 @@ public class MainView extends VBox {
 
     public MainView() {
         this.stepButton = new Button("Step");
+        this.stepButton.setOnAction(actionEvent -> {
+            this.simulation.step();
+            this.draw();
+        });
+
         this.canvas = new Canvas(400, 400);
         this.getChildren().addAll(this.stepButton, this.canvas);
 
@@ -34,6 +39,7 @@ public class MainView extends VBox {
         simulation.setAlive(5, 6);
         simulation.setAlive(6, 5);
         simulation.setAlive(6, 6);
+        simulation.setAlive(4, 5);
 
     }
 
