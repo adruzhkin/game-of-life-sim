@@ -3,7 +3,6 @@ package com.adruzhkin;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -86,9 +85,11 @@ public class MainView extends VBox {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
         g.setTransform(this.affine);
 
+        //Fill the canvas
         g.setFill(Color.LIGHTGREY);
         g.fillRect(0, 0, 400, 400);
 
+        //Draw simulation cells
         g.setFill(Color.BLACK);
         for (int x = 0; x < this.simulation.getWidth(); x++) {
             for (int y = 0; y < this.simulation.getHeight(); y++) {
