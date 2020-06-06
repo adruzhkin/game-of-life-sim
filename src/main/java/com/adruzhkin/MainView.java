@@ -23,12 +23,14 @@ public class MainView extends VBox {
     private Affine affine;
 
     private Simulation simulation;
+    private Simulation initialSimulation;
 
     private int drawMode = Simulation.ALIVE; //Default mode
     private int applicationState = MainView.EDITING; //Default app state
 
     public MainView() {
-        this.simulation = new Simulation(10, 10);
+        this.initialSimulation = new Simulation(10, 10);
+        this.simulation = Simulation.copy(this.initialSimulation);
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
@@ -68,6 +70,10 @@ public class MainView extends VBox {
         //Do nothing if current app state is the same as the new one
         if (this.applicationState == applicationState) return;
 
+        if (applicationState == MainView.SIMULATING) {
+            this.simulation = Simulation.copy(this.initialSimulation);
+        }
+
         this.applicationState = applicationState;
         System.out.println("Application state: " + applicationState);
     }
@@ -90,6 +96,8 @@ public class MainView extends VBox {
     }
 
     private void handleDraw(MouseEvent mouseEvent) {
+        if (this.applicationState == MainView.SIMULATING) return;
+
         Point2D simulationCoordinates = getSimulationCoordinates(mouseEvent);
 
         int simX = (int) simulationCoordinates.getX();
@@ -98,7 +106,7 @@ public class MainView extends VBox {
         System.out.println(simX + ", " + simY);
 
         //Update the state of the corresponding cell in Simulation
-        this.simulation.setState(simX, simY, this.drawMode);
+        this.initialSimulation.setState(simX, simY, this.drawMode);
         this.draw();
     }
 
@@ -125,13 +133,10 @@ public class MainView extends VBox {
         g.fillRect(0, 0, 400, 400);
 
         //Draw simulation cells
-        g.setFill(Color.BLACK);
-        for (int x = 0; x < this.simulation.getWidth(); x++) {
-            for (int y = 0; y < this.simulation.getHeight(); y++) {
-                if (this.simulation.getState(x, y) == Simulation.ALIVE) {
-                    g.fillRect(x, y, 1, 1);
-                }
-            }
+        if (this.applicationState == MainView.EDITING) {
+            drawSimulation(this.initialSimulation);
+        } else {
+            drawSimulation(this.simulation);
         }
 
         //Draw the grid
@@ -145,6 +150,18 @@ public class MainView extends VBox {
             g.strokeLine(0, y, 10, y);
         }
 
+    }
+
+    private void drawSimulation(Simulation simulationToDraw) {
+        GraphicsContext g = this.canvas.getGraphicsContext2D();
+        g.setFill(Color.BLACK);
+        for (int x = 0; x < simulationToDraw.getWidth(); x++) {
+            for (int y = 0; y < simulationToDraw.getHeight(); y++) {
+                if (simulationToDraw.getState(x, y) == Simulation.ALIVE) {
+                    g.fillRect(x, y, 1, 1);
+                }
+            }
+        }
     }
 
 }

@@ -45,7 +45,9 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleReset(ActionEvent actionEvent) {
+        System.out.println("Reset pressed");
         this.mainView.setApplicationState(MainView.EDITING);
+        this.mainView.draw();
     }
 
 }
