@@ -23,7 +23,13 @@ public class Toolbar extends ToolBar {
         Button reset = new Button("Reset");
         reset.setOnAction(this::handleReset);
 
-        this.getItems().addAll(draw, erase, reset, step);
+        Button start = new Button("Start");
+        start.setOnAction(this::handleStart);
+
+        Button stop = new Button("Stop");
+        stop.setOnAction(this::handleStop);
+
+        this.getItems().addAll(draw, erase, reset, step, start, stop);
     }
 
     private void handleDraw(ActionEvent actionEvent) {
@@ -48,6 +54,15 @@ public class Toolbar extends ToolBar {
         System.out.println("Reset pressed");
         this.mainView.setApplicationState(MainView.EDITING);
         this.mainView.draw();
+    }
+
+    private void handleStart(ActionEvent actionEvent) {
+        this.mainView.setApplicationState(MainView.SIMULATING);
+        this.mainView.getSimulator().start();
+    }
+
+    private void handleStop(ActionEvent actionEvent) {
+        this.mainView.getSimulator().stop();
     }
 
 }

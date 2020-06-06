@@ -25,6 +25,8 @@ public class MainView extends VBox {
     private Simulation simulation;
     private Simulation initialSimulation;
 
+    private Simulator simulator;
+
     private int drawMode = Simulation.ALIVE; //Default mode
     private int applicationState = MainView.EDITING; //Default app state
 
@@ -61,6 +63,10 @@ public class MainView extends VBox {
         return this.simulation;
     }
 
+    public Simulator getSimulator() {
+        return this.simulator;
+    }
+
     public void setDrawMode(int drawMode) {
         this.drawMode = drawMode;
         this.infobar.setDrawMode(drawMode);
@@ -72,6 +78,7 @@ public class MainView extends VBox {
 
         if (applicationState == MainView.SIMULATING) {
             this.simulation = Simulation.copy(this.initialSimulation);
+            this.simulator = new Simulator(this, this.simulation);
         }
 
         this.applicationState = applicationState;
