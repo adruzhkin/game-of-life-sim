@@ -15,6 +15,9 @@ import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MainView extends VBox {
 
+    public static final int EDITING = 0;
+    public static final int SIMULATING = 1;
+
     private Infobar infobar;
     private Canvas canvas;
     private Affine affine;
@@ -22,6 +25,7 @@ public class MainView extends VBox {
     private Simulation simulation;
 
     private int drawMode = Simulation.ALIVE; //Default mode
+    private int applicationState = MainView.EDITING; //Default app state
 
     public MainView() {
         this.simulation = new Simulation(10, 10);
@@ -51,11 +55,6 @@ public class MainView extends VBox {
         this.affine.appendScale(400 / 10f, 400 / 10f);
     }
 
-    private void handleMoved(MouseEvent mouseEvent) {
-        Point2D simulationCoordinates = this.getSimulationCoordinates(mouseEvent);
-        this.infobar.setCursorPosition((int) simulationCoordinates.getX(), (int) simulationCoordinates.getY());
-    }
-
     public Simulation getSimulation() {
         return this.simulation;
     }
@@ -63,6 +62,10 @@ public class MainView extends VBox {
     public void setDrawMode(int drawMode) {
         this.drawMode = drawMode;
         this.infobar.setDrawMode(drawMode);
+    }
+
+    public void setApplicationState(int applicationState) {
+        this.applicationState = applicationState;
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -75,6 +78,11 @@ public class MainView extends VBox {
             //Will draw dead cells (erase mode)
             this.drawMode = Simulation.DEAD;
         }
+    }
+
+    private void handleMoved(MouseEvent mouseEvent) {
+        Point2D simulationCoordinates = this.getSimulationCoordinates(mouseEvent);
+        this.infobar.setCursorPosition((int) simulationCoordinates.getX(), (int) simulationCoordinates.getY());
     }
 
     private void handleDraw(MouseEvent mouseEvent) {
