@@ -6,6 +6,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -13,6 +15,7 @@ import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MainView extends VBox {
 
+    private Infobar infobar;
     private Canvas canvas;
     private Affine affine;
 
@@ -31,8 +34,15 @@ public class MainView extends VBox {
         this.setOnKeyPressed(this::onKeyPressed);
 
         Toolbar toolbar = new Toolbar(this);
+        this.infobar = new Infobar();
 
-        this.getChildren().addAll(toolbar, this.canvas);
+        //Set spacer to fill the space between canvas and infobar
+        Pane spacer = new Pane();
+        spacer.setMinSize(0, 0); //shrink to nothing
+        spacer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); //shrink to all available space
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        this.getChildren().addAll(toolbar, this.canvas, spacer, this.infobar);
 
         this.affine = new Affine();
         this.affine.appendScale(400 / 10f, 400 / 10f);
