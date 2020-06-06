@@ -4,6 +4,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -14,10 +16,11 @@ public class MainView extends VBox {
 
     private Button stepButton;
     private Canvas canvas;
-
     private Affine affine;
 
     private Simulation simulation;
+
+    private int drawMode = 1; //Default mode
 
     public MainView() {
         this.simulation = new Simulation(10, 10);
@@ -32,10 +35,25 @@ public class MainView extends VBox {
         this.canvas.setOnMousePressed(this::handleDraw);
         this.canvas.setOnMouseDragged(this::handleDraw);
 
+        //Set a key listener on the entire MainView, not just the canvas itself
+        this.setOnKeyPressed(this::onKeyPressed);
+
         this.getChildren().addAll(this.stepButton, this.canvas);
 
         this.affine = new Affine();
         this.affine.appendScale(400 / 10f, 400 / 10f);
+    }
+
+    private void onKeyPressed(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.D) {
+            //Will draw live cells (draw mode)
+            this.drawMode = 1;
+        }
+
+        if (keyEvent.getCode() == KeyCode.E) {
+            //Will draw dead cells (erase mode)
+            this.drawMode = 0;
+        }
     }
 
     private void handleDraw(MouseEvent mouseEvent) {
@@ -52,7 +70,8 @@ public class MainView extends VBox {
 
             System.out.println(simX + ", " + simY);
 
-            this.simulation.setAlive(simX, simY);
+            //Update the state of the corresponding cell in Simulation
+            this.simulation.setState(simX, simY, this.drawMode);
             this.draw();
 
         } catch (NonInvertibleTransformException e) {

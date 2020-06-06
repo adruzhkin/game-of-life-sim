@@ -38,11 +38,11 @@ public class Simulation {
     }
 
     public void setAlive(int x, int y) {
-        this.board[x][y] = 1;
+        this.setState(x, y, 1);
     }
 
     public void setDead(int x, int y) {
-        this.board[x][y] = 0;
+        this.setState(x, y, 0);
     }
 
     public boolean isAlive(int x, int y) {
@@ -57,6 +57,12 @@ public class Simulation {
         if (x < 0 || x >= width) return 0;
         if (y < 0 || y >= height) return 0;
         return board[x][y];
+    }
+
+    public void setState(int x, int y, int state) {
+        if (x < 0 || x >= width) return;
+        if (y < 0 || y >= height) return;
+        board[x][y] = state;
     }
 
     public int countAliveNeighbours(int x, int y) {
