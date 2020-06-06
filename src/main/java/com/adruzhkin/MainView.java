@@ -65,7 +65,11 @@ public class MainView extends VBox {
     }
 
     public void setApplicationState(int applicationState) {
+        //Do nothing if current app state is the same as the new one
+        if (this.applicationState == applicationState) return;
+
         this.applicationState = applicationState;
+        System.out.println("Application state: " + applicationState);
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
