@@ -7,12 +7,15 @@ import javafx.scene.layout.Priority;
 
 public class Infobar extends HBox {
 
+    private static String drawModeFormat = "Draw mode: %s";
+    private static String cursorPositionFormat = "Cursor: (%d, %d)";
+
     private Label cursorPosition;
     private Label editingTool;
 
     public Infobar() {
-        this.cursorPosition = new Label("Cursor: (0, 0)");
-        this.editingTool = new Label("Draw mode: Drawing");
+        this.cursorPosition = new Label();
+        this.editingTool = new Label();
 
         //Set spacer to fill the space between editingTool and cursorPosition
         Pane spacer = new Pane();
@@ -22,4 +25,20 @@ public class Infobar extends HBox {
 
         this.getChildren().addAll(this.editingTool, spacer, this.cursorPosition);
     }
+
+    public void setDrawMode(int drawMode) {
+        String drawModeString;
+        if (drawMode == Simulation.ALIVE) {
+            drawModeString = "Drawing";
+        } else {
+            drawModeString = "Erasing";
+        }
+
+        this.editingTool.setText(String.format(drawModeFormat, drawModeString));
+    }
+
+    public void setCursorPosition(int x, int y) {
+        this.cursorPosition.setText(String.format(cursorPositionFormat, x, y));
+    }
+
 }

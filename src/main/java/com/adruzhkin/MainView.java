@@ -29,12 +29,15 @@ public class MainView extends VBox {
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
         this.canvas.setOnMouseDragged(this::handleDraw);
+        this.canvas.setOnMouseMoved(this::handleMoved);
 
         //Set a key listener on the entire MainView, not just the canvas itself
         this.setOnKeyPressed(this::onKeyPressed);
 
         Toolbar toolbar = new Toolbar(this);
         this.infobar = new Infobar();
+        this.infobar.setDrawMode(this.drawMode);
+        this.infobar.setCursorPosition(0, 0);
 
         //Set spacer to fill the space between canvas and infobar
         Pane spacer = new Pane();
@@ -48,12 +51,18 @@ public class MainView extends VBox {
         this.affine.appendScale(400 / 10f, 400 / 10f);
     }
 
+    private void handleMoved(MouseEvent mouseEvent) {
+        Point2D simulationCoordinates = this.getSimulationCoordinates(mouseEvent);
+        this.infobar.setCursorPosition((int) simulationCoordinates.getX(), (int) simulationCoordinates.getY());
+    }
+
     public Simulation getSimulation() {
         return this.simulation;
     }
 
     public void setDrawMode(int drawMode) {
         this.drawMode = drawMode;
+        this.infobar.setDrawMode(drawMode);
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -69,6 +78,19 @@ public class MainView extends VBox {
     }
 
     private void handleDraw(MouseEvent mouseEvent) {
+        Point2D simulationCoordinates = getSimulationCoordinates(mouseEvent);
+
+        int simX = (int) simulationCoordinates.getX();
+        int simY = (int) simulationCoordinates.getY();
+
+        System.out.println(simX + ", " + simY);
+
+        //Update the state of the corresponding cell in Simulation
+        this.simulation.setState(simX, simY, this.drawMode);
+        this.draw();
+    }
+
+    private Point2D getSimulationCoordinates(MouseEvent mouseEvent) {
         //Get mouse coordinates
         double mouseX = mouseEvent.getX();
         double mouseY = mouseEvent.getY();
@@ -76,18 +98,9 @@ public class MainView extends VBox {
         //Transform mouse coordinates into simulation coordinates
         try {
             Point2D simulationCoordinates = this.affine.inverseTransform(mouseX, mouseY);
-
-            int simX = (int) simulationCoordinates.getX();
-            int simY = (int) simulationCoordinates.getY();
-
-            System.out.println(simX + ", " + simY);
-
-            //Update the state of the corresponding cell in Simulation
-            this.simulation.setState(simX, simY, this.drawMode);
-            this.draw();
-
+            return simulationCoordinates;
         } catch (NonInvertibleTransformException e) {
-            System.out.println("Error: can not invert transform");
+            throw new RuntimeException("Non invertible transform");
         }
     }
 
