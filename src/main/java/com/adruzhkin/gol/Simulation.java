@@ -1,4 +1,4 @@
-package com.adruzhkin;
+package com.adruzhkin.gol;
 
 public class Simulation {
 

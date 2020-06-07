@@ -1,4 +1,4 @@
 module com.adruzhkin {
     requires javafx.controls;
-    exports com.adruzhkin;
+    exports com.adruzhkin.gol;
 }

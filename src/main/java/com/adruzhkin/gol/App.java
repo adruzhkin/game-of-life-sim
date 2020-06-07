@@ -1,4 +1,4 @@
-package com.adruzhkin;
+package com.adruzhkin.gol;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

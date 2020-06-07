@@ -1,4 +1,4 @@
-package com.adruzhkin;
+package com.adruzhkin.gol;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
