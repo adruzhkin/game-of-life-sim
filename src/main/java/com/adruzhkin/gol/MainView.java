@@ -1,5 +1,9 @@
 package com.adruzhkin.gol;
 
+import com.adruzhkin.gol.model.Board;
+import com.adruzhkin.gol.model.BoundedBoard;
+import com.adruzhkin.gol.model.CellState;
+import com.adruzhkin.gol.model.StandardRule;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,16 +27,13 @@ public class MainView extends VBox {
     private Affine affine;
 
     private Simulation simulation;
-    private Simulation initialSimulation;
+    private Board initialBoard;
 
-    private Simulator simulator;
-
-    private int drawMode = Simulation.ALIVE; //Default mode
+    private CellState drawMode = CellState.ALIVE; //Default mode
     private int applicationState = MainView.EDITING; //Default app state
 
     public MainView() {
-        this.initialSimulation = new Simulation(10, 10);
-        this.simulation = Simulation.copy(this.initialSimulation);
+        this.initialBoard = new BoundedBoard(10, 10);
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
@@ -63,13 +64,13 @@ public class MainView extends VBox {
         return this.simulation;
     }
 
-    public Simulator getSimulator() {
-        return this.simulator;
-    }
-
-    public void setDrawMode(int drawMode) {
+    public void setDrawMode(CellState drawMode) {
         this.drawMode = drawMode;
         this.infobar.setDrawMode(drawMode);
+    }
+
+    public int getApplicationState() {
+        return this.applicationState;
     }
 
     public void setApplicationState(int applicationState) {
@@ -77,8 +78,7 @@ public class MainView extends VBox {
         if (this.applicationState == applicationState) return;
 
         if (applicationState == MainView.SIMULATING) {
-            this.simulation = Simulation.copy(this.initialSimulation);
-            this.simulator = new Simulator(this, this.simulation);
+            this.simulation = new Simulation(this.initialBoard, new StandardRule());
         }
 
         this.applicationState = applicationState;
@@ -88,12 +88,12 @@ public class MainView extends VBox {
     private void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.D) {
             //Will draw live cells (draw mode)
-            this.drawMode = Simulation.ALIVE;
+            this.drawMode = CellState.ALIVE;
         }
 
         if (keyEvent.getCode() == KeyCode.E) {
             //Will draw dead cells (erase mode)
-            this.drawMode = Simulation.DEAD;
+            this.drawMode = CellState.DEAD;
         }
     }
 
@@ -113,7 +113,7 @@ public class MainView extends VBox {
         System.out.println(simX + ", " + simY);
 
         //Update the state of the corresponding cell in Simulation
-        this.initialSimulation.setState(simX, simY, this.drawMode);
+        this.initialBoard.setState(simX, simY, this.drawMode);
         this.draw();
     }
 
@@ -141,30 +141,30 @@ public class MainView extends VBox {
 
         //Draw simulation cells
         if (this.applicationState == MainView.EDITING) {
-            drawSimulation(this.initialSimulation);
+            drawSimulation(this.initialBoard);
         } else {
-            drawSimulation(this.simulation);
+            drawSimulation(this.simulation.getBoard());
         }
 
         //Draw the grid
         g.setStroke(Color.GRAY);
         g.setLineWidth(0.05);
-        for (int x = 0; x <= this.simulation.getWidth(); x++) {
+        for (int x = 0; x <= this.initialBoard.getWidth(); x++) {
             g.strokeLine(x, 0, x, 10);
         }
 
-        for (int y = 0; y <= this.simulation.getHeight(); y++) {
+        for (int y = 0; y <= this.initialBoard.getHeight(); y++) {
             g.strokeLine(0, y, 10, y);
         }
 
     }
 
-    private void drawSimulation(Simulation simulationToDraw) {
+    private void drawSimulation(Board simulationToDraw) {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
         g.setFill(Color.BLACK);
         for (int x = 0; x < simulationToDraw.getWidth(); x++) {
             for (int y = 0; y < simulationToDraw.getHeight(); y++) {
-                if (simulationToDraw.getState(x, y) == Simulation.ALIVE) {
+                if (simulationToDraw.getState(x, y) == CellState.ALIVE) {
                     g.fillRect(x, y, 1, 1);
                 }
             }

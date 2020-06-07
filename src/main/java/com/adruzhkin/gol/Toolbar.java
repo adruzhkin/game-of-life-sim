@@ -1,5 +1,6 @@
 package com.adruzhkin.gol;
 
+import com.adruzhkin.gol.model.CellState;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -7,6 +8,7 @@ import javafx.scene.control.ToolBar;
 public class Toolbar extends ToolBar {
 
     private MainView mainView;
+    private Simulator simulator;
 
     public Toolbar(MainView mainView) {
         this.mainView = mainView;
@@ -34,18 +36,17 @@ public class Toolbar extends ToolBar {
 
     private void handleDraw(ActionEvent actionEvent) {
         System.out.println("Draw pressed");
-        this.mainView.setDrawMode(Simulation.ALIVE);
+        this.mainView.setDrawMode(CellState.ALIVE);
     }
 
     private void handleErase(ActionEvent actionEvent) {
         System.out.println("Erase pressed");
-        this.mainView.setDrawMode(Simulation.DEAD);
+        this.mainView.setDrawMode(CellState.DEAD);
     }
 
     private void handleStep(ActionEvent actionEvent) {
         System.out.println("Step pressed");
-        this.mainView.setApplicationState(MainView.SIMULATING);
-
+        this.switchToSimulatingState();
         this.mainView.getSimulation().step();
         this.mainView.draw();
     }
@@ -53,16 +54,24 @@ public class Toolbar extends ToolBar {
     private void handleReset(ActionEvent actionEvent) {
         System.out.println("Reset pressed");
         this.mainView.setApplicationState(MainView.EDITING);
+        this.simulator = null;
         this.mainView.draw();
     }
 
     private void handleStart(ActionEvent actionEvent) {
-        this.mainView.setApplicationState(MainView.SIMULATING);
-        this.mainView.getSimulator().start();
+        this.switchToSimulatingState();
+        this.simulator.start();
     }
 
     private void handleStop(ActionEvent actionEvent) {
-        this.mainView.getSimulator().stop();
+        this.simulator.stop();
+    }
+
+    private void switchToSimulatingState() {
+        if (this.mainView.getApplicationState() == MainView.EDITING) {
+            this.mainView.setApplicationState(MainView.SIMULATING);
+            this.simulator = new Simulator(this.mainView, this.mainView.getSimulation());
+        }
     }
 
 }
