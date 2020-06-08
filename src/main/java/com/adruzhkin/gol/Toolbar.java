@@ -64,7 +64,9 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleStop(ActionEvent actionEvent) {
-        this.simulator.stop();
+        if (this.mainView.getApplicationState() == MainView.SIMULATING) {
+            this.simulator.stop();
+        }
     }
 
     private void switchToSimulatingState() {
