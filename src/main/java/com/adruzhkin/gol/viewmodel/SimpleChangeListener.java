@@ -1,7 +1,7 @@
 package com.adruzhkin.gol.viewmodel;
 
-public interface SimpleChangeListener {
+public interface SimpleChangeListener<V> {
 
-    void valueChanged();
+    void valueChanged(V value);
 
 }
