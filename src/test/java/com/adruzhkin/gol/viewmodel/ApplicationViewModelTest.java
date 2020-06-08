@@ -8,40 +8,39 @@ import static org.junit.jupiter.api.Assertions.*;
 class ApplicationViewModelTest {
 
     private ApplicationViewModel applicationViewModel;
+    private TestAppStateListener listener;
 
     @BeforeEach
     void setUp() {
         this.applicationViewModel = new ApplicationViewModel(ApplicationState.EDITING);
+        this.listener = new TestAppStateListener(this.applicationViewModel.getCurrentState());
+        this.applicationViewModel.listenToAppState(this.listener);
     }
 
     @Test
     void setCurrentState_differentState() {
-        TestAppStateListener listener = new TestAppStateListener();
-        this.applicationViewModel.listenToAppState(listener);
         this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
 
-        assertTrue(listener.appStateUpdated);
-        assertEquals(ApplicationState.SIMULATING, listener.updatedAppState);
+        assertEquals(ApplicationState.SIMULATING, listener.appState);
     }
 
     @Test
     void setCurrentState_sameState() {
-        TestAppStateListener listener = new TestAppStateListener();
-        this.applicationViewModel.listenToAppState(listener);
         this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
 
-        assertFalse(listener.appStateUpdated);
-        assertNull(listener.updatedAppState);
+        assertEquals(ApplicationState.EDITING, listener.appState);
     }
 
     private static class TestAppStateListener implements SimpleChangeListener<ApplicationState> {
-        private boolean appStateUpdated = false;
-        private ApplicationState updatedAppState = null;
+        private ApplicationState appState;
+
+        public TestAppStateListener(ApplicationState appState) {
+            this.appState = appState;
+        }
 
         @Override
         public void valueChanged(ApplicationState newAppState) {
-            updatedAppState = newAppState;
-            appStateUpdated = true;
+            this.appState = newAppState;
         }
     }
 

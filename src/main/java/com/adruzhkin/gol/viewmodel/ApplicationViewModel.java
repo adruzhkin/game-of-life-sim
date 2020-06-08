@@ -13,6 +13,10 @@ public class ApplicationViewModel {
         this.appStateListeners = new LinkedList<>();
     }
 
+    public ApplicationState getCurrentState() {
+        return currentState;
+    }
+
     public void setCurrentState(ApplicationState newState) {
         if (this.currentState != newState) {
             this.currentState = newState;
