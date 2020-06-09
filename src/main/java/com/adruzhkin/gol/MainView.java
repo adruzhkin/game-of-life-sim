@@ -4,6 +4,8 @@ import com.adruzhkin.gol.model.Board;
 import com.adruzhkin.gol.model.BoundedBoard;
 import com.adruzhkin.gol.model.CellState;
 import com.adruzhkin.gol.model.StandardRule;
+import com.adruzhkin.gol.viewmodel.ApplicationState;
+import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -19,9 +21,6 @@ import javafx.scene.transform.NonInvertibleTransformException;
 
 public class MainView extends VBox {
 
-    public static final int EDITING = 0;
-    public static final int SIMULATING = 1;
-
     private Infobar infobar;
     private Canvas canvas;
     private Affine affine;
@@ -30,9 +29,16 @@ public class MainView extends VBox {
     private Board initialBoard;
 
     private CellState drawMode = CellState.ALIVE; //Default mode
-    private int applicationState = MainView.EDITING; //Default app state
 
-    public MainView() {
+    private ApplicationViewModel appViewModel;
+
+    private boolean isDrawingEnabled = true;
+    private boolean drawInitialBoard = true;
+
+    public MainView(ApplicationViewModel appViewModel) {
+        this.appViewModel = appViewModel;
+        this.appViewModel.listenToAppState(this::onApplicationStateChanged);
+
         this.initialBoard = new BoundedBoard(10, 10);
 
         this.canvas = new Canvas(400, 400);
@@ -43,7 +49,7 @@ public class MainView extends VBox {
         //Set a key listener on the entire MainView, not just the canvas itself
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(this);
+        Toolbar toolbar = new Toolbar(this, appViewModel);
         this.infobar = new Infobar();
         this.infobar.setDrawMode(this.drawMode);
         this.infobar.setCursorPosition(0, 0);
@@ -69,20 +75,17 @@ public class MainView extends VBox {
         this.infobar.setDrawMode(drawMode);
     }
 
-    public int getApplicationState() {
-        return this.applicationState;
-    }
-
-    public void setApplicationState(int applicationState) {
-        //Do nothing if current app state is the same as the new one
-        if (this.applicationState == applicationState) return;
-
-        if (applicationState == MainView.SIMULATING) {
+    private void onApplicationStateChanged(ApplicationState state) {
+        if (state == ApplicationState.EDITING) {
+            this.isDrawingEnabled = true;
+            this.drawInitialBoard = true;
+        } else if (state == ApplicationState.SIMULATING) {
+            this.isDrawingEnabled = false;
+            this.drawInitialBoard = false;
             this.simulation = new Simulation(this.initialBoard, new StandardRule());
+        } else {
+            throw new IllegalArgumentException("Unsupported ApplicationState value: " + state.name());
         }
-
-        this.applicationState = applicationState;
-        System.out.println("Application state: " + applicationState);
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -103,7 +106,7 @@ public class MainView extends VBox {
     }
 
     private void handleDraw(MouseEvent mouseEvent) {
-        if (this.applicationState == MainView.SIMULATING) return;
+        if (!this.isDrawingEnabled) return;
 
         Point2D simulationCoordinates = getSimulationCoordinates(mouseEvent);
 
@@ -140,7 +143,7 @@ public class MainView extends VBox {
         g.fillRect(0, 0, 400, 400);
 
         //Draw simulation cells
-        if (this.applicationState == MainView.EDITING) {
+        if (this.drawInitialBoard) {
             drawSimulation(this.initialBoard);
         } else {
             drawSimulation(this.simulation.getBoard());
