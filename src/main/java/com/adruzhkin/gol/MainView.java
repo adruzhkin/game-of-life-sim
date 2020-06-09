@@ -5,6 +5,7 @@ import com.adruzhkin.gol.model.CellState;
 import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
 import com.adruzhkin.gol.viewmodel.BoardViewModel;
 import com.adruzhkin.gol.viewmodel.EditorViewModel;
+import com.adruzhkin.gol.viewmodel.SimulationViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,7 +28,8 @@ public class MainView extends VBox {
     private BoardViewModel boardViewModel;
     private EditorViewModel editorViewModel;
 
-    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel) {
+    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel,
+                    SimulationViewModel simulationViewModel) {
 
         this.boardViewModel = boardViewModel;
         this.boardViewModel.listenToBoard(this::onBoardChanged);
@@ -42,7 +44,8 @@ public class MainView extends VBox {
         //Set a key listener on the entire MainView, not just the canvas itself
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(editorViewModel, appViewModel, boardViewModel);
+        Toolbar toolbar = new Toolbar(editorViewModel, appViewModel, simulationViewModel);
+
         this.infobar = new Infobar(editorViewModel);
         this.infobar.setCursorPosition(0, 0);
 

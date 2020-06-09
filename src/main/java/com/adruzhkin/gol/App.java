@@ -2,10 +2,7 @@ package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.Board;
 import com.adruzhkin.gol.model.BoundedBoard;
-import com.adruzhkin.gol.viewmodel.ApplicationState;
-import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
-import com.adruzhkin.gol.viewmodel.BoardViewModel;
-import com.adruzhkin.gol.viewmodel.EditorViewModel;
+import com.adruzhkin.gol.viewmodel.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -21,10 +18,12 @@ public class App extends Application {
         BoardViewModel boardViewModel = new BoardViewModel();
         Board board = new BoundedBoard(10, 10);
         EditorViewModel editorViewModel = new EditorViewModel(boardViewModel, board);
+        SimulationViewModel simulationViewModel = new SimulationViewModel(boardViewModel);
 
         appViewModel.listenToAppState(editorViewModel::onAppStateChanged);
+        appViewModel.listenToAppState(simulationViewModel::onAppStateChanged);
 
-        MainView mainView = new MainView(appViewModel, boardViewModel, editorViewModel);
+        MainView mainView = new MainView(appViewModel, boardViewModel, editorViewModel, simulationViewModel);
         Scene scene = new Scene(mainView, 640, 480);
         stage.setScene(scene);
         stage.show();

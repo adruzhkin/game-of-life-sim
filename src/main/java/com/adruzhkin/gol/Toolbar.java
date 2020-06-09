@@ -2,10 +2,7 @@ package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.CellState;
 import com.adruzhkin.gol.model.StandardRule;
-import com.adruzhkin.gol.viewmodel.ApplicationState;
-import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
-import com.adruzhkin.gol.viewmodel.BoardViewModel;
-import com.adruzhkin.gol.viewmodel.EditorViewModel;
+import com.adruzhkin.gol.viewmodel.*;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -14,13 +11,14 @@ public class Toolbar extends ToolBar {
 
     private EditorViewModel editorViewModel;
     private ApplicationViewModel applicationViewModel;
-    private BoardViewModel boardViewModel;
-    private Simulator simulator;
+    private SimulationViewModel simulationViewModel;
 
-    public Toolbar(EditorViewModel editorViewModel, ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel) {
+    public Toolbar(EditorViewModel editorViewModel, ApplicationViewModel applicationViewModel,
+                   SimulationViewModel simulationViewModel) {
+
         this.editorViewModel = editorViewModel;
         this.applicationViewModel = applicationViewModel;
-        this.boardViewModel = boardViewModel;
+        this.simulationViewModel = simulationViewModel;
 
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
@@ -56,30 +54,27 @@ public class Toolbar extends ToolBar {
     private void handleStep(ActionEvent actionEvent) {
         System.out.println("Step pressed");
         this.switchToSimulatingState();
-        this.simulator.doStep();
+        this.simulationViewModel.doStep();
     }
 
     private void handleReset(ActionEvent actionEvent) {
         System.out.println("Reset pressed");
         this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
-        this.simulator = null;
     }
 
     private void handleStart(ActionEvent actionEvent) {
         this.switchToSimulatingState();
-        this.simulator.start();
+        this.simulationViewModel.start();
     }
 
     private void handleStop(ActionEvent actionEvent) {
         if (this.applicationViewModel.getCurrentState() == ApplicationState.SIMULATING) {
-            this.simulator.stop();
+            this.simulationViewModel.stop();
         }
     }
 
     private void switchToSimulatingState() {
         this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
-        Simulation simulation = new Simulation(boardViewModel.getBoard(), new StandardRule());
-        this.simulator = new Simulator(this.boardViewModel, simulation);
     }
 
 }
