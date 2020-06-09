@@ -25,14 +25,12 @@ public class MainView extends VBox {
     private Canvas canvas;
     private Affine affine;
 
-    private BoardViewModel boardViewModel;
     private EditorViewModel editorViewModel;
 
     public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel,
                     SimulationViewModel simulationViewModel) {
 
-        this.boardViewModel = boardViewModel;
-        this.boardViewModel.listenToBoard(this::onBoardChanged);
+        boardViewModel.listenToBoard(this::onBoardChanged);
 
         this.editorViewModel = editorViewModel;
 
@@ -101,14 +99,14 @@ public class MainView extends VBox {
 
         //Transform mouse coordinates into simulation coordinates
         try {
-            Point2D simulationCoordinates = this.affine.inverseTransform(mouseX, mouseY);
-            return simulationCoordinates;
+            Point2D point2D = this.affine.inverseTransform(mouseX, mouseY);
+            return point2D;
         } catch (NonInvertibleTransformException e) {
             throw new RuntimeException("Non invertible transform");
         }
     }
 
-    public void draw(Board board) {
+    private void draw(Board board) {
         GraphicsContext g = this.canvas.getGraphicsContext2D();
         g.setTransform(this.affine);
 
