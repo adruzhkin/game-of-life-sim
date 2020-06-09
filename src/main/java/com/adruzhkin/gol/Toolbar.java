@@ -1,6 +1,7 @@
 package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.CellState;
+import com.adruzhkin.gol.model.StandardRule;
 import com.adruzhkin.gol.viewmodel.ApplicationState;
 import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
 import com.adruzhkin.gol.viewmodel.BoardViewModel;
@@ -76,7 +77,8 @@ public class Toolbar extends ToolBar {
 
     private void switchToSimulatingState() {
         this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
-        this.simulator = new Simulator(this.boardViewModel, this.mainView.getSimulation());
+        Simulation simulation = new Simulation(boardViewModel.getBoard(), new StandardRule());
+        this.simulator = new Simulator(this.boardViewModel, simulation);
     }
 
 }
