@@ -20,11 +20,11 @@ public class ApplicationViewModel {
     public void setCurrentState(ApplicationState newState) {
         if (this.currentState != newState) {
             this.currentState = newState;
-            this.notifyAppStateListener();
+            this.notifyAppStateListeners();
         }
     }
 
-    private void notifyAppStateListener() {
+    private void notifyAppStateListeners() {
         for (SimpleChangeListener<ApplicationState> appStateListener : this.appStateListeners) {
             appStateListener.valueChanged(this.currentState);
         }
