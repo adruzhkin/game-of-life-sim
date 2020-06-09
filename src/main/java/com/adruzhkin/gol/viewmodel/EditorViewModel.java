@@ -13,7 +13,7 @@ public class EditorViewModel {
 
     private BoardViewModel boardViewModel;
     private Board editorBoard;
-    private boolean drawingEnabled;
+    private boolean drawingEnabled = true;
 
     public EditorViewModel(BoardViewModel boardViewModel, Board initialBoard) {
         this.boardViewModel = boardViewModel;
@@ -49,4 +49,10 @@ public class EditorViewModel {
         }
     }
 
+    public void boardPressed(int simX, int simY) {
+        if (this.drawingEnabled) {
+            this.editorBoard.setState(simX, simY, this.drawMode);
+            this.boardViewModel.setBoard(this.editorBoard);
+        }
+    }
 }

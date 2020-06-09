@@ -2,9 +2,9 @@ package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.Board;
 import com.adruzhkin.gol.model.CellState;
-import com.adruzhkin.gol.viewmodel.ApplicationState;
 import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
 import com.adruzhkin.gol.viewmodel.BoardViewModel;
+import com.adruzhkin.gol.viewmodel.EditorViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,23 +24,15 @@ public class MainView extends VBox {
     private Canvas canvas;
     private Affine affine;
 
-    private Board initialBoard;
-
-    private CellState drawMode = CellState.ALIVE; //Default mode
-
-    private ApplicationViewModel appViewModel;
     private BoardViewModel boardViewModel;
+    private EditorViewModel editorViewModel;
 
-    private boolean isDrawingEnabled = true;
-
-    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, Board initialBoard) {
-        this.appViewModel = appViewModel;
-        this.appViewModel.listenToAppState(this::onApplicationStateChanged);
+    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, EditorViewModel editorViewModel) {
 
         this.boardViewModel = boardViewModel;
         this.boardViewModel.listenToBoard(this::onBoardChanged);
 
-        this.initialBoard = initialBoard;
+        this.editorViewModel = editorViewModel;
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
@@ -50,9 +42,8 @@ public class MainView extends VBox {
         //Set a key listener on the entire MainView, not just the canvas itself
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(this, appViewModel, boardViewModel);
-        this.infobar = new Infobar();
-        this.infobar.setDrawMode(this.drawMode);
+        Toolbar toolbar = new Toolbar(editorViewModel, appViewModel, boardViewModel);
+        this.infobar = new Infobar(editorViewModel);
         this.infobar.setCursorPosition(0, 0);
 
         //Set spacer to fill the space between canvas and infobar
@@ -67,22 +58,6 @@ public class MainView extends VBox {
         this.affine.appendScale(400 / 10f, 400 / 10f);
     }
 
-    public void setDrawMode(CellState drawMode) {
-        this.drawMode = drawMode;
-        this.infobar.setDrawMode(drawMode);
-    }
-
-    private void onApplicationStateChanged(ApplicationState state) {
-        if (state == ApplicationState.EDITING) {
-            this.isDrawingEnabled = true;
-            this.boardViewModel.setBoard(this.initialBoard);
-        } else if (state == ApplicationState.SIMULATING) {
-            this.isDrawingEnabled = false;
-        } else {
-            throw new IllegalArgumentException("Unsupported ApplicationState value: " + state.name());
-        }
-    }
-
     private void onBoardChanged(Board board) {
         this.draw(board);
     }
@@ -90,12 +65,12 @@ public class MainView extends VBox {
     private void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.D) {
             //Will draw live cells (draw mode)
-            this.drawMode = CellState.ALIVE;
+            this.editorViewModel.setDrawMode(CellState.ALIVE);
         }
 
         if (keyEvent.getCode() == KeyCode.E) {
             //Will draw dead cells (erase mode)
-            this.drawMode = CellState.DEAD;
+            this.editorViewModel.setDrawMode(CellState.DEAD);
         }
     }
 
@@ -105,8 +80,6 @@ public class MainView extends VBox {
     }
 
     private void handleDraw(MouseEvent mouseEvent) {
-        if (!this.isDrawingEnabled) return;
-
         Point2D simulationCoordinates = getSimulationCoordinates(mouseEvent);
 
         int simX = (int) simulationCoordinates.getX();
@@ -115,8 +88,7 @@ public class MainView extends VBox {
         System.out.println(simX + ", " + simY);
 
         //Update the state of the corresponding cell in Simulation
-        this.initialBoard.setState(simX, simY, this.drawMode);
-        this.boardViewModel.setBoard(this.initialBoard);
+        this.editorViewModel.boardPressed(simX, simY);
     }
 
     private Point2D getSimulationCoordinates(MouseEvent mouseEvent) {

@@ -1,6 +1,7 @@
 package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.CellState;
+import com.adruzhkin.gol.viewmodel.EditorViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -14,7 +15,9 @@ public class Infobar extends HBox {
     private Label cursorPosition;
     private Label editingTool;
 
-    public Infobar() {
+    public Infobar(EditorViewModel editorViewModel) {
+        editorViewModel.listenToDrawMode(this::setDrawMode);
+
         this.cursorPosition = new Label();
         this.editingTool = new Label();
 
@@ -27,7 +30,7 @@ public class Infobar extends HBox {
         this.getChildren().addAll(this.editingTool, spacer, this.cursorPosition);
     }
 
-    public void setDrawMode(CellState drawMode) {
+    private void setDrawMode(CellState drawMode) {
         String drawModeString;
         if (drawMode == CellState.ALIVE) {
             drawModeString = "Drawing";
