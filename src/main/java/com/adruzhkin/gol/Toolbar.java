@@ -3,6 +3,7 @@ package com.adruzhkin.gol;
 import com.adruzhkin.gol.model.CellState;
 import com.adruzhkin.gol.viewmodel.ApplicationState;
 import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
+import com.adruzhkin.gol.viewmodel.BoardViewModel;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -11,11 +12,13 @@ public class Toolbar extends ToolBar {
 
     private MainView mainView;
     private ApplicationViewModel applicationViewModel;
+    private BoardViewModel boardViewModel;
     private Simulator simulator;
 
-    public Toolbar(MainView mainView, ApplicationViewModel applicationViewModel) {
+    public Toolbar(MainView mainView, ApplicationViewModel applicationViewModel, BoardViewModel boardViewModel) {
         this.mainView = mainView;
         this.applicationViewModel = applicationViewModel;
+        this.boardViewModel = boardViewModel;
 
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
@@ -51,15 +54,13 @@ public class Toolbar extends ToolBar {
     private void handleStep(ActionEvent actionEvent) {
         System.out.println("Step pressed");
         this.switchToSimulatingState();
-        this.mainView.getSimulation().step();
-        this.mainView.draw();
+        this.simulator.doStep();
     }
 
     private void handleReset(ActionEvent actionEvent) {
         System.out.println("Reset pressed");
         this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
         this.simulator = null;
-        this.mainView.draw();
     }
 
     private void handleStart(ActionEvent actionEvent) {
@@ -75,7 +76,7 @@ public class Toolbar extends ToolBar {
 
     private void switchToSimulatingState() {
         this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
-        this.simulator = new Simulator(this.mainView, this.mainView.getSimulation());
+        this.simulator = new Simulator(this.boardViewModel, this.mainView.getSimulation());
     }
 
 }

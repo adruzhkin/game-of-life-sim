@@ -1,11 +1,11 @@
 package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.Board;
-import com.adruzhkin.gol.model.BoundedBoard;
 import com.adruzhkin.gol.model.CellState;
 import com.adruzhkin.gol.model.StandardRule;
 import com.adruzhkin.gol.viewmodel.ApplicationState;
 import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
+import com.adruzhkin.gol.viewmodel.BoardViewModel;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -31,15 +31,19 @@ public class MainView extends VBox {
     private CellState drawMode = CellState.ALIVE; //Default mode
 
     private ApplicationViewModel appViewModel;
+    private BoardViewModel boardViewModel;
 
     private boolean isDrawingEnabled = true;
     private boolean drawInitialBoard = true;
 
-    public MainView(ApplicationViewModel appViewModel) {
+    public MainView(ApplicationViewModel appViewModel, BoardViewModel boardViewModel, Board initialBoard) {
         this.appViewModel = appViewModel;
         this.appViewModel.listenToAppState(this::onApplicationStateChanged);
 
-        this.initialBoard = new BoundedBoard(10, 10);
+        this.boardViewModel = boardViewModel;
+        this.boardViewModel.listenToBoard(this::onBoardChanged);
+
+        this.initialBoard = initialBoard;
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
@@ -49,7 +53,7 @@ public class MainView extends VBox {
         //Set a key listener on the entire MainView, not just the canvas itself
         this.setOnKeyPressed(this::onKeyPressed);
 
-        Toolbar toolbar = new Toolbar(this, appViewModel);
+        Toolbar toolbar = new Toolbar(this, appViewModel, boardViewModel);
         this.infobar = new Infobar();
         this.infobar.setDrawMode(this.drawMode);
         this.infobar.setCursorPosition(0, 0);
@@ -79,6 +83,7 @@ public class MainView extends VBox {
         if (state == ApplicationState.EDITING) {
             this.isDrawingEnabled = true;
             this.drawInitialBoard = true;
+            this.boardViewModel.setBoard(this.initialBoard);
         } else if (state == ApplicationState.SIMULATING) {
             this.isDrawingEnabled = false;
             this.drawInitialBoard = false;
@@ -86,6 +91,10 @@ public class MainView extends VBox {
         } else {
             throw new IllegalArgumentException("Unsupported ApplicationState value: " + state.name());
         }
+    }
+
+    private void onBoardChanged(Board board) {
+        this.draw();
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -117,7 +126,7 @@ public class MainView extends VBox {
 
         //Update the state of the corresponding cell in Simulation
         this.initialBoard.setState(simX, simY, this.drawMode);
-        this.draw();
+        this.boardViewModel.setBoard(this.initialBoard);
     }
 
     private Point2D getSimulationCoordinates(MouseEvent mouseEvent) {
