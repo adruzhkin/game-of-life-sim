@@ -27,6 +27,9 @@ public class Infobar extends HBox {
         spacer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); //shrink to all available space
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        this.setDrawMode(CellState.ALIVE);
+        this.setCursorPosition(0, 0);
+
         this.getChildren().addAll(this.editingTool, spacer, this.cursorPosition);
     }
 
