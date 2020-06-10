@@ -19,22 +19,34 @@ public class SimulationCanvas extends Pane {
     private Affine affine;
 
     private EditorViewModel editorViewModel;
+    private BoardViewModel boardViewModel;
 
     public SimulationCanvas(EditorViewModel editorViewModel, BoardViewModel boardViewModel) {
         this.editorViewModel = editorViewModel;
+        this.boardViewModel = boardViewModel;
         boardViewModel.listenToBoard(this::draw);
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
         this.canvas.setOnMouseDragged(this::handleDraw);
         //this.canvas.setOnMouseMoved(this::handleMoved);
+
+        this.canvas.widthProperty().bind(this.widthProperty());
+        this.canvas.heightProperty().bind(this.heightProperty());
+
         this.getChildren().addAll(this.canvas);
 
         this.affine = new Affine();
         this.affine.appendScale(400 / 10f, 400 / 10f);
     }
 
-//    private void onBoardChanged(Board board) {
+    @Override
+    public void resize(double width, double height) {
+        super.resize(width, height);
+        this.draw(boardViewModel.getBoard());
+    }
+
+    //    private void onBoardChanged(Board board) {
 //        this.draw(board);
 //    }
 
@@ -84,11 +96,11 @@ public class SimulationCanvas extends Pane {
         g.setStroke(Color.GRAY);
         g.setLineWidth(0.05);
         for (int x = 0; x <= board.getWidth(); x++) {
-            g.strokeLine(x, 0, x, 10);
+            g.strokeLine(x, 0, x, board.getHeight());
         }
 
         for (int y = 0; y <= board.getHeight(); y++) {
-            g.strokeLine(0, y, 10, y);
+            g.strokeLine(0, y, board.getWidth(), y);
         }
 
     }

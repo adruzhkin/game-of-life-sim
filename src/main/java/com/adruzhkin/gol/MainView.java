@@ -27,6 +27,7 @@ public class MainView extends VBox {
         this.setOnKeyPressed(this::onKeyPressed);
 
         SimulationCanvas simulationCanvas = new SimulationCanvas(editorViewModel, boardViewModel);
+        VBox.setVgrow(simulationCanvas, Priority.ALWAYS);
 
         Toolbar toolbar = new Toolbar(editorViewModel, appViewModel, simulationViewModel);
 
