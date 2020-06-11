@@ -27,7 +27,7 @@ public class App extends Application {
         appViewModel.getApplicationState().listen(editorViewModel::onAppStateChanged);
         appViewModel.getApplicationState().listen(simulationViewModel::onAppStateChanged);
 
-        boardViewModel.setBoard(board);
+        boardViewModel.getBoard().set(board);
 
         SimulationCanvas simulationCanvas = new SimulationCanvas(editorViewModel, boardViewModel);
         Toolbar toolbar = new Toolbar(editorViewModel, appViewModel, simulationViewModel);

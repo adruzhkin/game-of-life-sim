@@ -24,7 +24,7 @@ public class SimulationCanvas extends Pane {
     public SimulationCanvas(EditorViewModel editorViewModel, BoardViewModel boardViewModel) {
         this.editorViewModel = editorViewModel;
         this.boardViewModel = boardViewModel;
-        boardViewModel.listenToBoard(this::draw);
+        boardViewModel.getBoard().listen(this::draw);
 
         this.canvas = new Canvas(400, 400);
         this.canvas.setOnMousePressed(this::handleDraw);
@@ -43,12 +43,8 @@ public class SimulationCanvas extends Pane {
     @Override
     public void resize(double width, double height) {
         super.resize(width, height);
-        this.draw(boardViewModel.getBoard());
+        this.draw(boardViewModel.getBoard().get());
     }
-
-    //    private void onBoardChanged(Board board) {
-//        this.draw(board);
-//    }
 
     private void handleDraw(MouseEvent mouseEvent) {
         Point2D simulationCoordinates = getSimulationCoordinates(mouseEvent);

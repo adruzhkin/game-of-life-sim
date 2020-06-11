@@ -43,7 +43,7 @@ public class EditorViewModel {
     public void onAppStateChanged(ApplicationState state) {
         if (state == ApplicationState.EDITING) {
             this.drawingEnabled = true;
-            this.boardViewModel.setBoard(editorBoard);
+            this.boardViewModel.getBoard().set(editorBoard);
         } else {
             this.drawingEnabled = false;
         }
@@ -52,7 +52,7 @@ public class EditorViewModel {
     public void boardPressed(int simX, int simY) {
         if (this.drawingEnabled) {
             this.editorBoard.setState(simX, simY, this.drawMode);
-            this.boardViewModel.setBoard(this.editorBoard);
+            this.boardViewModel.getBoard().set(this.editorBoard);
         }
     }
 }
