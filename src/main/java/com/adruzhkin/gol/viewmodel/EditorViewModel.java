@@ -2,42 +2,24 @@ package com.adruzhkin.gol.viewmodel;
 
 import com.adruzhkin.gol.model.Board;
 import com.adruzhkin.gol.model.CellState;
-
-import java.util.LinkedList;
-import java.util.List;
+import com.adruzhkin.gol.util.Property;
 
 public class EditorViewModel {
 
-    private CellState drawMode = CellState.ALIVE; //Default mode
-    private List<SimpleChangeListener<CellState>> drawModeListeners;
+    Property<CellState> drawMode;
 
     private BoardViewModel boardViewModel;
     private Board editorBoard;
     private boolean drawingEnabled = true;
 
     public EditorViewModel(BoardViewModel boardViewModel, Board initialBoard) {
+        this.drawMode = new Property<>(CellState.ALIVE);
         this.boardViewModel = boardViewModel;
         this.editorBoard = initialBoard;
-        this.drawModeListeners = new LinkedList<>();
     }
 
-    public CellState getDrawMode() {
-        return this.drawMode;
-    }
-
-    public void setDrawMode(CellState drawMode) {
-        this.drawMode = drawMode;
-        this.notifyDrawModeListeners();
-    }
-
-    private void notifyDrawModeListeners() {
-        for (SimpleChangeListener<CellState> drawModeListener : drawModeListeners) {
-            drawModeListener.valueChanged(this.drawMode);
-        }
-    }
-
-    public void listenToDrawMode(SimpleChangeListener<CellState> listener) {
-        this.drawModeListeners.add(listener);
+    public Property<CellState> getDrawMode() {
+        return drawMode;
     }
 
     public void onAppStateChanged(ApplicationState state) {
@@ -51,7 +33,7 @@ public class EditorViewModel {
 
     public void boardPressed(int simX, int simY) {
         if (this.drawingEnabled) {
-            this.editorBoard.setState(simX, simY, this.drawMode);
+            this.editorBoard.setState(simX, simY, this.drawMode.get());
             this.boardViewModel.getBoard().set(this.editorBoard);
         }
     }

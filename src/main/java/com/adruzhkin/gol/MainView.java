@@ -21,12 +21,12 @@ public class MainView extends BorderPane {
     private void onKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.D) {
             //Will draw live cells (draw mode)
-            this.editorViewModel.setDrawMode(CellState.ALIVE);
+            this.editorViewModel.getDrawMode().set(CellState.ALIVE);
         }
 
         if (keyEvent.getCode() == KeyCode.E) {
             //Will draw dead cells (erase mode)
-            this.editorViewModel.setDrawMode(CellState.DEAD);
+            this.editorViewModel.getDrawMode().set(CellState.DEAD);
         }
     }
 

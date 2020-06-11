@@ -45,12 +45,12 @@ public class Toolbar extends ToolBar {
 
     private void handleDraw(ActionEvent actionEvent) {
         System.out.println("Draw pressed");
-        this.editorViewModel.setDrawMode(CellState.ALIVE);
+        this.editorViewModel.getDrawMode().set(CellState.ALIVE);
     }
 
     private void handleErase(ActionEvent actionEvent) {
         System.out.println("Erase pressed");
-        this.editorViewModel.setDrawMode(CellState.DEAD);
+        this.editorViewModel.getDrawMode().set(CellState.DEAD);
     }
 
     private void handleStep(ActionEvent actionEvent) {
