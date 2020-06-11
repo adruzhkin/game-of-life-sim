@@ -7,7 +7,11 @@ import java.util.Map;
 
 public class EventBus {
 
-    private Map<Class, List<EventListener>> listeners = new HashMap<>();
+    private Map<Class, List<EventListener>> listeners;
+
+    public EventBus() {
+        this.listeners = new HashMap<>();
+    }
 
     public void emit(Event event) {
         Class eventClass = event.getClass();
