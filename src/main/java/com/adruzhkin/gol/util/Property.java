@@ -23,12 +23,12 @@ public class Property<T> {
         this.listeners.add(listener);
     }
 
-    public void setValue(T newValue) {
+    public void set(T newValue) {
         this.value = newValue;
         this.notifyListeners();
     }
 
-    public T getValue() {
+    public T get() {
         return this.value;
     }
 

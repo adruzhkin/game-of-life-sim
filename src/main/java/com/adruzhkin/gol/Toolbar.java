@@ -1,8 +1,10 @@
 package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.CellState;
-import com.adruzhkin.gol.model.StandardRule;
-import com.adruzhkin.gol.viewmodel.*;
+import com.adruzhkin.gol.viewmodel.ApplicationState;
+import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
+import com.adruzhkin.gol.viewmodel.EditorViewModel;
+import com.adruzhkin.gol.viewmodel.SimulationViewModel;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -59,7 +61,7 @@ public class Toolbar extends ToolBar {
 
     private void handleReset(ActionEvent actionEvent) {
         System.out.println("Reset pressed");
-        this.applicationViewModel.setCurrentState(ApplicationState.EDITING);
+        this.applicationViewModel.getApplicationState().set(ApplicationState.EDITING);
     }
 
     private void handleStart(ActionEvent actionEvent) {
@@ -68,13 +70,13 @@ public class Toolbar extends ToolBar {
     }
 
     private void handleStop(ActionEvent actionEvent) {
-        if (this.applicationViewModel.getCurrentState() == ApplicationState.SIMULATING) {
+        if (this.applicationViewModel.getApplicationState().get() == ApplicationState.SIMULATING) {
             this.simulationViewModel.stop();
         }
     }
 
     private void switchToSimulatingState() {
-        this.applicationViewModel.setCurrentState(ApplicationState.SIMULATING);
+        this.applicationViewModel.getApplicationState().set(ApplicationState.SIMULATING);
     }
 
 }

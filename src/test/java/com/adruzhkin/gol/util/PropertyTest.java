@@ -11,14 +11,14 @@ class PropertyTest {
     void constructWithInitialValue() {
         Property<String> stringProperty = new Property<>("Hello World");
 
-        assertEquals("Hello World", stringProperty.getValue());
+        assertEquals("Hello World", stringProperty.get());
     }
 
     @Test
     void constructWithNoInitialValue() {
         Property<String> stringProperty = new Property<>();
 
-        assertNull(stringProperty.getValue());
+        assertNull(stringProperty.get());
     }
 
     @Test
@@ -26,11 +26,11 @@ class PropertyTest {
         DoubleListener listener = new DoubleListener();
         Property<Double> doubleProperty = new Property<>(1.0);
         doubleProperty.listen(listener);
-        doubleProperty.setValue(2.0);
+        doubleProperty.set(2.0);
 
         assertTrue(listener.notified);
         assertEquals(2.0, listener.value);
-        assertEquals(2.0, doubleProperty.getValue());
+        assertEquals(2.0, doubleProperty.get());
     }
 
     private class DoubleListener implements SimpleChangeListener<Double> {

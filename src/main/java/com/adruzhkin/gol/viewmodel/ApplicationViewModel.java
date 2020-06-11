@@ -1,37 +1,16 @@
 package com.adruzhkin.gol.viewmodel;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.adruzhkin.gol.util.Property;
 
 public class ApplicationViewModel {
 
-    private ApplicationState currentState;
-    private List<SimpleChangeListener<ApplicationState>> appStateListeners;
+    private Property<ApplicationState> applicationState;
 
-    public ApplicationViewModel(ApplicationState currentState) {
-        this.currentState = currentState;
-        this.appStateListeners = new LinkedList<>();
+    public ApplicationViewModel() {
+        this.applicationState = new Property<>(ApplicationState.EDITING);
     }
 
-    public ApplicationState getCurrentState() {
-        return currentState;
+    public Property<ApplicationState> getApplicationState() {
+        return applicationState;
     }
-
-    public void setCurrentState(ApplicationState newState) {
-        if (this.currentState != newState) {
-            this.currentState = newState;
-            this.notifyAppStateListeners();
-        }
-    }
-
-    private void notifyAppStateListeners() {
-        for (SimpleChangeListener<ApplicationState> appStateListener : this.appStateListeners) {
-            appStateListener.valueChanged(this.currentState);
-        }
-    }
-
-    public void listenToAppState(SimpleChangeListener<ApplicationState> listener) {
-        this.appStateListeners.add(listener);
-    }
-
 }
