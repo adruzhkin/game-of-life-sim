@@ -3,5 +3,6 @@ module com.adruzhkin {
     exports com.adruzhkin.gol;
     exports com.adruzhkin.gol.model;
     exports com.adruzhkin.gol.util;
+    exports com.adruzhkin.gol.util.event;
     exports com.adruzhkin.gol.viewmodel;
 }

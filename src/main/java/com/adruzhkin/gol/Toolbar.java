@@ -1,10 +1,8 @@
 package com.adruzhkin.gol;
 
 import com.adruzhkin.gol.model.CellState;
-import com.adruzhkin.gol.viewmodel.ApplicationState;
-import com.adruzhkin.gol.viewmodel.ApplicationViewModel;
-import com.adruzhkin.gol.viewmodel.EditorViewModel;
-import com.adruzhkin.gol.viewmodel.SimulationViewModel;
+import com.adruzhkin.gol.util.event.EventBus;
+import com.adruzhkin.gol.viewmodel.*;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -12,15 +10,12 @@ import javafx.scene.control.ToolBar;
 public class Toolbar extends ToolBar {
 
     private EditorViewModel editorViewModel;
-    private ApplicationViewModel applicationViewModel;
-    private SimulationViewModel simulationViewModel;
+    private EventBus eventBus;
 
-    public Toolbar(EditorViewModel editorViewModel, ApplicationViewModel applicationViewModel,
-                   SimulationViewModel simulationViewModel) {
+    public Toolbar(EditorViewModel editorViewModel, EventBus eventBus) {
 
         this.editorViewModel = editorViewModel;
-        this.applicationViewModel = applicationViewModel;
-        this.simulationViewModel = simulationViewModel;
+        this.eventBus = eventBus;
 
         Button draw = new Button("Draw");
         draw.setOnAction(this::handleDraw);
@@ -55,28 +50,21 @@ public class Toolbar extends ToolBar {
 
     private void handleStep(ActionEvent actionEvent) {
         System.out.println("Step pressed");
-        this.switchToSimulatingState();
-        this.simulationViewModel.doStep();
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.STEP));
     }
 
     private void handleReset(ActionEvent actionEvent) {
         System.out.println("Reset pressed");
-        this.applicationViewModel.getApplicationState().set(ApplicationState.EDITING);
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.RESET));
     }
 
     private void handleStart(ActionEvent actionEvent) {
-        this.switchToSimulatingState();
-        this.simulationViewModel.start();
+        System.out.println("Start pressed");
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.START));
     }
 
     private void handleStop(ActionEvent actionEvent) {
-        if (this.applicationViewModel.getApplicationState().get() == ApplicationState.SIMULATING) {
-            this.simulationViewModel.stop();
-        }
+        System.out.println("Stop pressed");
+        this.eventBus.emit(new SimulatorEvent(SimulatorEvent.Type.STOP));
     }
-
-    private void switchToSimulatingState() {
-        this.applicationViewModel.getApplicationState().set(ApplicationState.SIMULATING);
-    }
-
 }

@@ -1,6 +1,8 @@
 package com.adruzhkin.gol.viewmodel;
 
-public class SimulatorEvent {
+import com.adruzhkin.gol.util.event.Event;
+
+public class SimulatorEvent implements Event {
 
     public enum Type {
         START,
