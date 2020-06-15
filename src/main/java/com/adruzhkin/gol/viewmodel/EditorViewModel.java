@@ -45,4 +45,8 @@ public class EditorViewModel {
             this.boardViewModel.getBoard().set(this.editorBoard);
         }
     }
+
+    public Board getBoard() {
+        return editorBoard;
+    }
 }
